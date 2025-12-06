@@ -21,14 +21,18 @@ from .cartpole_env_cfg import CartpoleEnvCfg, CartpoleSceneCfg
 
 @configclass
 class CartpoleRGBCameraSceneCfg(CartpoleSceneCfg):
-
     # add camera to the scene
     tiled_camera: TiledCameraCfg = TiledCameraCfg(
         prim_path="{ENV_REGEX_NS}/Camera",
-        offset=TiledCameraCfg.OffsetCfg(pos=(-7.0, 0.0, 3.0), rot=(0.9945, 0.0, 0.1045, 0.0), convention="world"),
+        offset=TiledCameraCfg.OffsetCfg(
+            pos=(-7.0, 0.0, 3.0), rot=(0.9945, 0.0, 0.1045, 0.0), convention="world"
+        ),
         data_types=["rgb"],
         spawn=sim_utils.PinholeCameraCfg(
-            focal_length=24.0, focus_distance=400.0, horizontal_aperture=20.955, clipping_range=(0.1, 20.0)
+            focal_length=24.0,
+            focus_distance=400.0,
+            horizontal_aperture=20.955,
+            clipping_range=(0.1, 20.0),
         ),
         width=100,
         height=100,
@@ -37,14 +41,18 @@ class CartpoleRGBCameraSceneCfg(CartpoleSceneCfg):
 
 @configclass
 class CartpoleDepthCameraSceneCfg(CartpoleSceneCfg):
-
     # add camera to the scene
     tiled_camera: TiledCameraCfg = TiledCameraCfg(
         prim_path="{ENV_REGEX_NS}/Camera",
-        offset=TiledCameraCfg.OffsetCfg(pos=(-7.0, 0.0, 3.0), rot=(0.9945, 0.0, 0.1045, 0.0), convention="world"),
+        offset=TiledCameraCfg.OffsetCfg(
+            pos=(-7.0, 0.0, 3.0), rot=(0.9945, 0.0, 0.1045, 0.0), convention="world"
+        ),
         data_types=["distance_to_camera"],
         spawn=sim_utils.PinholeCameraCfg(
-            focal_length=24.0, focus_distance=400.0, horizontal_aperture=20.955, clipping_range=(0.1, 20.0)
+            focal_length=24.0,
+            focus_distance=400.0,
+            horizontal_aperture=20.955,
+            clipping_range=(0.1, 20.0),
         ),
         width=100,
         height=100,
@@ -64,7 +72,10 @@ class RGBObservationsCfg:
     class RGBCameraPolicyCfg(ObsGroup):
         """Observations for policy group with RGB images."""
 
-        image = ObsTerm(func=mdp.image, params={"sensor_cfg": SceneEntityCfg("tiled_camera"), "data_type": "rgb"})
+        image = ObsTerm(
+            func=mdp.image,
+            params={"sensor_cfg": SceneEntityCfg("tiled_camera"), "data_type": "rgb"},
+        )
 
         def __post_init__(self):
             self.enable_corruption = False
@@ -82,7 +93,11 @@ class DepthObservationsCfg:
         """Observations for policy group with depth images."""
 
         image = ObsTerm(
-            func=mdp.image, params={"sensor_cfg": SceneEntityCfg("tiled_camera"), "data_type": "distance_to_camera"}
+            func=mdp.image,
+            params={
+                "sensor_cfg": SceneEntityCfg("tiled_camera"),
+                "data_type": "distance_to_camera",
+            },
         )
 
     policy: ObsGroup = DepthCameraPolicyCfg()
@@ -98,7 +113,11 @@ class ResNet18ObservationCfg:
 
         image = ObsTerm(
             func=mdp.image_features,
-            params={"sensor_cfg": SceneEntityCfg("tiled_camera"), "data_type": "rgb", "model_name": "resnet18"},
+            params={
+                "sensor_cfg": SceneEntityCfg("tiled_camera"),
+                "data_type": "rgb",
+                "model_name": "resnet18",
+            },
         )
 
     policy: ObsGroup = ResNet18FeaturesCameraPolicyCfg()
@@ -134,7 +153,9 @@ class TheiaTinyObservationCfg:
 class CartpoleRGBCameraEnvCfg(CartpoleEnvCfg):
     """Configuration for the cartpole environment with RGB camera."""
 
-    scene: CartpoleRGBCameraSceneCfg = CartpoleRGBCameraSceneCfg(num_envs=512, env_spacing=20)
+    scene: CartpoleRGBCameraSceneCfg = CartpoleRGBCameraSceneCfg(
+        num_envs=512, env_spacing=20
+    )
     observations: RGBObservationsCfg = RGBObservationsCfg()
 
     def __post_init__(self):
@@ -150,7 +171,9 @@ class CartpoleRGBCameraEnvCfg(CartpoleEnvCfg):
 class CartpoleDepthCameraEnvCfg(CartpoleEnvCfg):
     """Configuration for the cartpole environment with depth camera."""
 
-    scene: CartpoleDepthCameraSceneCfg = CartpoleDepthCameraSceneCfg(num_envs=512, env_spacing=20)
+    scene: CartpoleDepthCameraSceneCfg = CartpoleDepthCameraSceneCfg(
+        num_envs=512, env_spacing=20
+    )
     observations: DepthObservationsCfg = DepthObservationsCfg()
 
     def __post_init__(self):

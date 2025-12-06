@@ -13,23 +13,23 @@ from isaaclab_rl.rsl_rl import (
 
 
 @configclass
-class AntREPPORunnerCfg(RslRlOnPolicyRunnerCfg):
+class HumanoidREPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 128
     max_iterations = 100000
     save_interval = 50
-    experiment_name = "ant"
+    experiment_name = "humanoid"
     policy = RslRlReppoActorQCfg(
         init_noise_std=1.0,
         init_alpha_kl=0.01,
         init_alpha_temp=0.01,
-        actor_obs_normalization=False,
-        critic_obs_normalization=False,
+        actor_obs_normalization=True,
+        critic_obs_normalization=True,
         actor_hidden_dims=[512, 512, 512],
-        critic_hidden_dims=[512, 512, 512],
-        activation="swish",
+        critic_hidden_dims=[1024, 1024, 512],
+        activation="elu",
         noise_std_type="log",
-        vmin=-15.0,
-        vmax=15.0,
+        vmin=-20.0,
+        vmax=20.0,
     )
     algorithm = RslRlReppoAlgorithmCfg(
         num_learning_epochs=4,
@@ -42,4 +42,7 @@ class AntREPPORunnerCfg(RslRlOnPolicyRunnerCfg):
         target_entropy=-0.5,
         rnd_cfg=None,
         symmetry_cfg=None,
+        scale_actions=True,
+        action_upper_bound=5.0,
+        action_lower_bound=-5.0,
     )

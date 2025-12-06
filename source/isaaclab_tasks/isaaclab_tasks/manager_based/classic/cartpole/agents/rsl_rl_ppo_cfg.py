@@ -5,7 +5,12 @@
 
 from isaaclab.utils import configclass
 
-from isaaclab_rl.rsl_rl import RslRlOnPolicyRunnerCfg, RslRlPpoActorCriticCfg, RslRlPpoAlgorithmCfg, RslRlSymmetryCfg
+from isaaclab_rl.rsl_rl import (
+    RslRlOnPolicyRunnerCfg,
+    RslRlPpoActorCriticCfg,
+    RslRlPpoAlgorithmCfg,
+    RslRlSymmetryCfg,
+)
 
 import isaaclab_tasks.manager_based.classic.cartpole.mdp.symmetry as symmetry
 
@@ -59,6 +64,7 @@ class CartpolePPORunnerWithSymmetryCfg(CartpolePPORunnerCfg):
         desired_kl=0.01,
         max_grad_norm=1.0,
         symmetry_cfg=RslRlSymmetryCfg(
-            use_data_augmentation=True, data_augmentation_func=symmetry.compute_symmetric_states
+            use_data_augmentation=True,
+            data_augmentation_func=symmetry.compute_symmetric_states,
         ),
     )

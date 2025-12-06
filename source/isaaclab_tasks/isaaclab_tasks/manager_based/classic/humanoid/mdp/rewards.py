@@ -20,7 +20,9 @@ if TYPE_CHECKING:
 
 
 def upright_posture_bonus(
-    env: ManagerBasedRLEnv, threshold: float, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+    env: ManagerBasedRLEnv,
+    threshold: float,
+    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
 ) -> torch.Tensor:
     """Reward for maintaining an upright posture."""
     up_proj = obs.base_up_proj(env, asset_cfg).squeeze(-1)
@@ -55,7 +57,9 @@ class progress_reward(ManagerTermBase):
         target_pos = torch.tensor(self.cfg.params["target_pos"], device=self.device)
         to_target_pos = target_pos - asset.data.root_pos_w[env_ids, :3]
         # reward terms
-        self.potentials[env_ids] = -torch.norm(to_target_pos, p=2, dim=-1) / self._env.step_dt
+        self.potentials[env_ids] = (
+            -torch.norm(to_target_pos, p=2, dim=-1) / self._env.step_dt
+        )
         self.prev_potentials[env_ids] = self.potentials[env_ids]
 
     def __call__(
@@ -105,13 +109,17 @@ class joint_pos_limits_penalty_ratio(ManagerTermBase):
         asset: Articulation = env.scene[asset_cfg.name]
         # compute the penalty over normalized joints
         joint_pos_scaled = math_utils.scale_transform(
-            asset.data.joint_pos, asset.data.soft_joint_pos_limits[..., 0], asset.data.soft_joint_pos_limits[..., 1]
+            asset.data.joint_pos,
+            asset.data.soft_joint_pos_limits[..., 0],
+            asset.data.soft_joint_pos_limits[..., 1],
         )
         # scale the violation amount by the gear ratio
         violation_amount = (torch.abs(joint_pos_scaled) - threshold) / (1 - threshold)
         violation_amount = violation_amount * self.gear_ratio_scaled
 
-        return torch.sum((torch.abs(joint_pos_scaled) > threshold) * violation_amount, dim=-1)
+        return torch.sum(
+            (torch.abs(joint_pos_scaled) > threshold) * violation_amount, dim=-1
+        )
 
 
 class power_consumption(ManagerTermBase):
@@ -135,9 +143,19 @@ class power_consumption(ManagerTermBase):
         self.gear_ratio_scaled = self.gear_ratio / torch.max(self.gear_ratio)
 
     def __call__(
-        self, env: ManagerBasedRLEnv, gear_ratio: dict[str, float], asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+        self,
+        env: ManagerBasedRLEnv,
+        gear_ratio: dict[str, float],
+        asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
     ) -> torch.Tensor:
         # extract the used quantities (to enable type-hinting)
         asset: Articulation = env.scene[asset_cfg.name]
         # return power = torque * velocity (here actions: joint torques)
-        return torch.sum(torch.abs(env.action_manager.action * asset.data.joint_vel * self.gear_ratio_scaled), dim=-1)
+        return torch.sum(
+            torch.abs(
+                env.action_manager.action
+                * asset.data.joint_vel
+                * self.gear_ratio_scaled
+            ),
+            dim=-1,
+        )
