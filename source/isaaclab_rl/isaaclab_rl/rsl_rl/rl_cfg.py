@@ -125,6 +125,80 @@ class RslRlPpoAlgorithmCfg:
     symmetry_cfg: RslRlSymmetryCfg | None = None
     """The symmetry configuration. Default is None, in which case symmetry is not used."""
 
+@configclass
+class RslRlReppoActorQCfg:
+    """Configuration for the RE-PPO actor-critic networks."""
+
+    class_name: str = "ActorQ"
+    """The policy class name. Default is ReppoActorQ."""
+    init_noise_std: float = MISSING
+    """The initial noise standard deviation for the policy."""
+    init_alpha_kl: float = MISSING
+    """The initial KL divergence coefficient."""
+    init_alpha_temp: float = MISSING
+    """The initial temperature coefficient."""
+    actor_obs_normalization: bool = MISSING
+    """Whether to normalize the observation for the actor network."""
+    critic_obs_normalization: bool = MISSING
+    """Whether to normalize the observation for the critic network."""
+    actor_hidden_dims: list[int] = MISSING
+    """The hidden dimensions of the actor network."""
+    critic_hidden_dims: list[int] = MISSING
+    """The hidden dimensions of the critic network."""
+    activation: str = MISSING
+    """The activation function for the actor and critic networks."""
+    noise_std_type: Literal["scalar", "log"] = "scalar"
+    """The type of noise standard deviation for the policy. Default is scalar."""
+    vmin: float = MISSING
+    """The minimum value for value distribution."""
+    vmax: float = MISSING
+    """The maximum value for value distribution."""
+@configclass
+class RslRlReppoAlgorithmCfg:
+    """Configuration for the RE-PPO algorithm."""
+
+    class_name: str = "REPPO"
+    """The algorithm class name. Default is Reppo."""
+
+    num_learning_epochs: int = MISSING
+    """The number of learning epochs per update."""
+
+    num_mini_batches: int = MISSING
+    """The number of mini-batches per update."""
+
+    learning_rate: float = MISSING
+    """The learning rate for the policy."""
+
+    gamma: float = MISSING
+    """The discount factor."""
+
+    lam: float = MISSING
+    """The lambda parameter for Generalized Advantage Estimation (GAE)."""
+
+    desired_kl: float = MISSING
+    """The desired KL divergence."""
+
+    max_grad_norm: float = MISSING
+    """The maximum gradient norm."""
+
+    target_entropy: float = MISSING
+    """The target entropy for the policy."""
+
+    rnd_cfg: RslRlRndCfg | None = None
+    """The RND configuration. Default is None, in which case RND is not used."""
+
+    symmetry_cfg: RslRlSymmetryCfg | None = None
+    """The symmetry configuration. Default is None, in which case symmetry is not used."""
+
+    scale_actions: bool = False
+    """Whether to scale actions to the environment's action bounds. Default is False."""
+
+    action_upper_bound: float = 1.0
+    """The upper bound for action scaling. Default is 1.0."""
+
+    action_lower_bound: float = -1.0
+    """The lower bound for action scaling. Default is -1.0."""
+
 
 #########################
 # Runner configurations #
